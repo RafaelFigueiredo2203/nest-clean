@@ -6,8 +6,8 @@ Content-Type: application/json
 
 {
   "name":"Junior",
-	"email":"junior5151@email.com",
-	"password":"12345"
+	"email":"junior58585@email.com",
+	"password":"123456"
 }
 
 ###
@@ -17,7 +17,7 @@ POST {{baseUrl}}/sessions
 Content-Type: application/json
 
 {
-	"email":"junior5151@email.com",
-	"password":"12345"
+	"email":"junior58585@email.com",
+	"password":"123456"
 }
 
