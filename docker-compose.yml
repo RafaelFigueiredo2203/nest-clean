@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  nest-clean-postgres:
+    image: bitnami/postgresql
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_DATABASE=nest-clean
+    volumes:
+      - ./data/pg:/data/postgres
+
+
+
