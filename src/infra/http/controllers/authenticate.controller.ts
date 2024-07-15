@@ -1,5 +1,6 @@
 import { AuthenticateStudentUseCase } from '@/domain/forum/application/use-cases/authenticate-student'
 import { WrongCredentialsError } from '@/domain/forum/application/use-cases/errors/wrong-credentials-error'
+import { Public } from '@/infra/auth/public'
 import {
   BadRequestException,
   Body,
@@ -19,6 +20,7 @@ const authenticateBodySchemma = z.object({
 type AuthenticateBodySchemma = z.infer<typeof authenticateBodySchemma>
 
 @Controller('/sessions')
+@Public()
 export class AuthenticateController {
   constructor(private authenticateStudent: AuthenticateStudentUseCase) {}
 
