@@ -1,41 +1,43 @@
+import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questions-repository'
 import { makeQuestion } from 'test/factories/make-question'
-import { InMemoryQuestionAttachmentsRepositories } from 'test/repositories/in-memory-question-attachments-repository'
-import { InMemoryQuestionCommentRepositories } from 'test/repositories/in-memory-question-comments'
-import { InMemoryQuestionsRepositories } from 'test/repositories/in-memory-questions-repository'
-import { CommentOnQuestionUseCase } from './comment-on-question'
+import { InMemoryQuestionCommentsRepository } from 'test/repositories/in-memory-question-comments-repository'
+import { CommentOnQuestionUseCase } from '@/domain/forum/application/use-cases/comment-on-question'
+import { InMemoryQuestionAttachmentsRepository } from 'test/repositories/in-memory-question-attachments-repository'
 
-let inMemoryQuestionsRepositories: InMemoryQuestionsRepositories
-let inMemoryQuestionAttachmentsRepositories: InMemoryQuestionAttachmentsRepositories
-let inMemoryQuestionCommentRepositories: InMemoryQuestionCommentRepositories
+let inMemoryQuestionsRepository: InMemoryQuestionsRepository
+let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository
+let inMemoryQuestionCommentsRepository: InMemoryQuestionCommentsRepository
 let sut: CommentOnQuestionUseCase
-describe('Comment on question ', () => {
+
+describe('Comment on Question', () => {
   beforeEach(() => {
-    inMemoryQuestionAttachmentsRepositories =
-      new InMemoryQuestionAttachmentsRepositories()
-    inMemoryQuestionsRepositories = new InMemoryQuestionsRepositories(
-      inMemoryQuestionAttachmentsRepositories,
+    inMemoryQuestionAttachmentsRepository =
+      new InMemoryQuestionAttachmentsRepository()
+    inMemoryQuestionsRepository = new InMemoryQuestionsRepository(
+      inMemoryQuestionAttachmentsRepository,
     )
-    inMemoryQuestionCommentRepositories =
-      new InMemoryQuestionCommentRepositories()
+    inMemoryQuestionCommentsRepository =
+      new InMemoryQuestionCommentsRepository()
+
     sut = new CommentOnQuestionUseCase(
-      inMemoryQuestionsRepositories,
-      inMemoryQuestionCommentRepositories,
+      inMemoryQuestionsRepository,
+      inMemoryQuestionCommentsRepository,
     )
   })
 
-  it('should be able to comment on question ', async () => {
+  it('should be able to comment on question', async () => {
     const question = makeQuestion()
 
-    await inMemoryQuestionsRepositories.create(question)
+    await inMemoryQuestionsRepository.create(question)
 
     await sut.execute({
       questionId: question.id.toString(),
       authorId: question.authorId.toString(),
-      content: 'Teste',
+      content: 'Comentário teste',
     })
 
-    expect(inMemoryQuestionCommentRepositories.items[0].content).toEqual(
-      'Teste',
+    expect(inMemoryQuestionCommentsRepository.items[0].content).toEqual(
+      'Comentário teste',
     )
   })
 })

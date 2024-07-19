@@ -2,8 +2,8 @@ import { PaginationParams } from '@/core/repositories/pagination-params'
 import { QuestionsRepository } from '@/domain/forum/application/repositories/questions-repository'
 import { Question } from '@/domain/forum/enterprise/entities/question'
 import { Injectable } from '@nestjs/common'
-import { PrismaQuestionMapper } from '../mappers/prisma-question-mapper'
 import { PrismaService } from '../prisma.service'
+import { PrismaQuestionMapper } from '../mappers/prisma-question-mapper'
 
 @Injectable()
 export class PrismaQuestionsRepository implements QuestionsRepository {
@@ -11,7 +11,9 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
 
   async findById(id: string): Promise<Question | null> {
     const question = await this.prisma.question.findUnique({
-      where: { id },
+      where: {
+        id,
+      },
     })
 
     if (!question) {
@@ -23,7 +25,9 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
 
   async findBySlug(slug: string): Promise<Question | null> {
     const question = await this.prisma.question.findUnique({
-      where: { slug },
+      where: {
+        slug,
+      },
     })
 
     if (!question) {
@@ -57,7 +61,9 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     const data = PrismaQuestionMapper.toPrisma(question)
 
     await this.prisma.question.update({
-      where: { id: data.id },
+      where: {
+        id: question.id.toString(),
+      },
       data,
     })
   }
@@ -66,7 +72,9 @@ export class PrismaQuestionsRepository implements QuestionsRepository {
     const data = PrismaQuestionMapper.toPrisma(question)
 
     await this.prisma.question.delete({
-      where: { id: data.id },
+      where: {
+        id: data.id,
+      },
     })
   }
 }

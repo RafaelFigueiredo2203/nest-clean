@@ -1,14 +1,13 @@
-import { Either, left, right } from '@/core/either'
-
-import { NotAllowedError } from '@/core/errors/errors/not-allowed-error'
-import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
-import { Question } from '../../enterprise/entities/question'
 import { AnswersRepository } from '../repositories/answers-repository'
-import { QuestionsRepository } from '../repositories/questions-repository'
+import { Question } from '@/domain/forum/enterprise/entities/question'
+import { QuestionsRepository } from '@/domain/forum/application/repositories/questions-repository'
+import { Either, left, right } from '@/core/either'
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
+import { NotAllowedError } from '@/core/errors/errors/not-allowed-error'
 
 interface ChooseQuestionBestAnswerUseCaseRequest {
-  answerId: string
   authorId: string
+  answerId: string
 }
 
 type ChooseQuestionBestAnswerUseCaseResponse = Either<
@@ -20,8 +19,8 @@ type ChooseQuestionBestAnswerUseCaseResponse = Either<
 
 export class ChooseQuestionBestAnswerUseCase {
   constructor(
-    private answersRepository: AnswersRepository,
     private questionsRepository: QuestionsRepository,
+    private answersRepository: AnswersRepository,
   ) {}
 
   async execute({
@@ -50,6 +49,8 @@ export class ChooseQuestionBestAnswerUseCase {
 
     await this.questionsRepository.save(question)
 
-    return right({ question })
+    return right({
+      question,
+    })
   }
 }

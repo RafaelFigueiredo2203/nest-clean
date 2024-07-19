@@ -10,7 +10,7 @@ export class PrismaAnswersRepository implements AnswersRepository {
   }
 
   findManyByQuestionId(
-    qustionId: string,
+    questionId: string,
     params: PaginationParams,
   ): Promise<Answer[]> {
     throw new Error('Method not implemented.')

@@ -1,9 +1,9 @@
 import { PaginationParams } from '@/core/repositories/pagination-params'
-import { QuestionCommentRepository } from '@/domain/forum/application/repositories/question-comments-repository'
+import { QuestionCommentsRepository } from '@/domain/forum/application/repositories/question-comments-repository'
 import { QuestionComment } from '@/domain/forum/enterprise/entities/question-comment'
 
-export class InMemoryQuestionCommentRepositories
-  implements QuestionCommentRepository
+export class InMemoryQuestionCommentsRepository
+  implements QuestionCommentsRepository
 {
   public items: QuestionComment[] = []
 
@@ -17,6 +17,14 @@ export class InMemoryQuestionCommentRepositories
     return questionComment
   }
 
+  async findManyByQuestionId(questionId: string, { page }: PaginationParams) {
+    const questionComments = this.items
+      .filter((item) => item.questionId.toString() === questionId)
+      .slice((page - 1) * 20, page * 20)
+
+    return questionComments
+  }
+
   async create(questionComment: QuestionComment) {
     this.items.push(questionComment)
   }
@@ -27,13 +35,5 @@ export class InMemoryQuestionCommentRepositories
     )
 
     this.items.splice(itemIndex, 1)
-  }
-
-  async findManyByQuestionId(questionId: string, { page }: PaginationParams) {
-    const questionComment = this.items
-      .filter((item) => item.questionId.toString() === questionId)
-      .slice((page - 1) * 20, page * 20)
-
-    return questionComment
   }
 }

@@ -1,14 +1,7 @@
-import { FetchRecentQuestionsUseCase } from '@/domain/forum/application/use-cases/fetch-recent-questions'
-import { JwtAuthGuard } from '@/infra/auth/jwt-auth.guard'
-import {
-  BadRequestException,
-  Controller,
-  Get,
-  Query,
-  UseGuards,
-} from '@nestjs/common'
+import { BadRequestException, Controller, Get, Query } from '@nestjs/common'
+import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe'
 import { z } from 'zod'
-import { ZodValidationPipe } from '../pipes/zod-validation-pipe'
+import { FetchRecentQuestionsUseCase } from '@/domain/forum/application/use-cases/fetch-recent-questions'
 import { QuestionPresenter } from '../presenters/question-presenter'
 
 const pageQueryParamSchema = z
@@ -23,7 +16,6 @@ const queryValidationPipe = new ZodValidationPipe(pageQueryParamSchema)
 type PageQueryParamSchema = z.infer<typeof pageQueryParamSchema>
 
 @Controller('/questions')
-@UseGuards(JwtAuthGuard)
 export class FetchRecentQuestionsController {
   constructor(private fetchRecentQuestions: FetchRecentQuestionsUseCase) {}
 
@@ -39,6 +31,6 @@ export class FetchRecentQuestionsController {
 
     const questions = result.value.questions
 
-    return { questions: questions.map(QuestionPresenter.toHttp) }
+    return { questions: questions.map(QuestionPresenter.toHTTP) }
   }
 }

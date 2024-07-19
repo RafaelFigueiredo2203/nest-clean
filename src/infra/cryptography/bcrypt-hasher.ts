@@ -1,8 +1,9 @@
-import { HashCompare } from '@/domain/forum/application/cryptography/hash-compare'
-import { HashGenerate } from '@/domain/forum/application/cryptography/hash-generator'
-import { compare, hash } from 'bcryptjs'
+import { hash, compare } from 'bcryptjs'
 
-export class BCryptHasher implements HashGenerate, HashCompare {
+import { HashComparer } from '@/domain/forum/application/cryptography/hash-comparer'
+import { HashGenerator } from '@/domain/forum/application/cryptography/hash-generator'
+
+export class BcryptHasher implements HashGenerator, HashComparer {
   private HASH_SALT_LENGTH = 8
 
   hash(plain: string): Promise<string> {

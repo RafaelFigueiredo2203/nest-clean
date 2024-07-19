@@ -1,33 +1,34 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { InMemoryQuestionCommentsRepository } from 'test/repositories/in-memory-question-comments-repository'
+import { FetchQuestionCommentsUseCase } from '@/domain/forum/application/use-cases/fetch-question-comments'
 import { makeQuestionComment } from 'test/factories/make-question-comment'
-import { InMemoryQuestionCommentRepositories } from 'test/repositories/in-memory-question-comments'
-import { FetchQuestionCommentUseCase } from './fetch-question-comments'
 
-let inMemoryQuestionCommentRepositories: InMemoryQuestionCommentRepositories
-let sut: FetchQuestionCommentUseCase
+let inMemoryQuestionCommentsRepository: InMemoryQuestionCommentsRepository
+let sut: FetchQuestionCommentsUseCase
+
 describe('Fetch Question Comments', () => {
   beforeEach(() => {
-    inMemoryQuestionCommentRepositories =
-      new InMemoryQuestionCommentRepositories()
-    sut = new FetchQuestionCommentUseCase(inMemoryQuestionCommentRepositories)
+    inMemoryQuestionCommentsRepository =
+      new InMemoryQuestionCommentsRepository()
+    sut = new FetchQuestionCommentsUseCase(inMemoryQuestionCommentsRepository)
   })
 
-  it('should be able to fetch questions comments', async () => {
-    await inMemoryQuestionCommentRepositories.create(
+  it('should be able to fetch question comments', async () => {
+    await inMemoryQuestionCommentsRepository.create(
       makeQuestionComment({
-        questionId: new UniqueEntityId('question-1').toString(),
+        questionId: new UniqueEntityID('question-1'),
       }),
     )
 
-    await inMemoryQuestionCommentRepositories.create(
+    await inMemoryQuestionCommentsRepository.create(
       makeQuestionComment({
-        questionId: new UniqueEntityId('question-1').toString(),
+        questionId: new UniqueEntityID('question-1'),
       }),
     )
 
-    await inMemoryQuestionCommentRepositories.create(
+    await inMemoryQuestionCommentsRepository.create(
       makeQuestionComment({
-        questionId: new UniqueEntityId('question-1').toString(),
+        questionId: new UniqueEntityID('question-1'),
       }),
     )
 
@@ -39,11 +40,11 @@ describe('Fetch Question Comments', () => {
     expect(result.value?.questionComments).toHaveLength(3)
   })
 
-  it('should be able to fetch pagination questions comments', async () => {
+  it('should be able to fetch paginated question comments', async () => {
     for (let i = 1; i <= 22; i++) {
-      await inMemoryQuestionCommentRepositories.create(
+      await inMemoryQuestionCommentsRepository.create(
         makeQuestionComment({
-          questionId: new UniqueEntityId('question-1').toString(),
+          questionId: new UniqueEntityID('question-1'),
         }),
       )
     }

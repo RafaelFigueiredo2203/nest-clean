@@ -1,86 +1,86 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id'
-import { NotAllowedError } from '@/core/errors/errors/not-allowed-error'
-import { makeAnswer } from 'test/factories/make-answer'
-import { makeAnswerAttachments } from 'test/factories/make-answer-attachments'
-import { InMemoryAnswerAttachmentsRepositories } from 'test/repositories/in-memory-answer-attachments-repository'
-import { InMemoryAnswersRepositories } from 'test/repositories/in-memory-answers-repository'
 import { EditAnswerUseCase } from './edit-answer'
+import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository'
+import { makeAnswer } from 'test/factories/make-answer'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { NotAllowedError } from '@/core/errors/errors/not-allowed-error'
+import { InMemoryAnswerAttachmentsRepository } from 'test/repositories/in-memory-answer-attachments-repository'
+import { makeAnswerAttachment } from 'test/factories/make-answer-attachments'
 
-let inMemoryAnswerAttachmentsRepositories: InMemoryAnswerAttachmentsRepositories
-let inMemoryAnswersRepositories: InMemoryAnswersRepositories
+let inMemoryAnswerAttachmentsRepository: InMemoryAnswerAttachmentsRepository
+let inMemoryAnswersRepository: InMemoryAnswersRepository
 let sut: EditAnswerUseCase
+
 describe('Edit Answer', () => {
   beforeEach(() => {
-    inMemoryAnswerAttachmentsRepositories =
-      new InMemoryAnswerAttachmentsRepositories()
-    inMemoryAnswersRepositories = new InMemoryAnswersRepositories(
-      inMemoryAnswerAttachmentsRepositories,
+    inMemoryAnswerAttachmentsRepository =
+      new InMemoryAnswerAttachmentsRepository()
+    inMemoryAnswersRepository = new InMemoryAnswersRepository(
+      inMemoryAnswerAttachmentsRepository,
     )
+
     sut = new EditAnswerUseCase(
-      inMemoryAnswersRepositories,
-      inMemoryAnswerAttachmentsRepositories,
+      inMemoryAnswersRepository,
+      inMemoryAnswerAttachmentsRepository,
     )
   })
 
   it('should be able to edit a answer', async () => {
     const newAnswer = makeAnswer(
       {
-        authorId: new UniqueEntityId('author-1'),
+        authorId: new UniqueEntityID('author-1'),
       },
-      new UniqueEntityId('answer1'),
+      new UniqueEntityID('answer-1'),
     )
 
-    console.log(newAnswer)
+    await inMemoryAnswersRepository.create(newAnswer)
 
-    await inMemoryAnswersRepositories.create(newAnswer)
-
-    inMemoryAnswerAttachmentsRepositories.items.push(
-      makeAnswerAttachments({
+    inMemoryAnswerAttachmentsRepository.items.push(
+      makeAnswerAttachment({
         answerId: newAnswer.id,
-        attachmentId: new UniqueEntityId('1'),
+        attachmentId: new UniqueEntityID('1'),
       }),
-      makeAnswerAttachments({
+      makeAnswerAttachment({
         answerId: newAnswer.id,
-        attachmentId: new UniqueEntityId('2'),
+        attachmentId: new UniqueEntityID('2'),
       }),
     )
 
     await sut.execute({
-      authorId: 'author-1',
-      content: 'Conteudo teste',
       answerId: newAnswer.id.toValue(),
+      authorId: 'author-1',
+      content: 'Conteúdo teste',
       attachmentsIds: ['1', '3'],
     })
 
-    expect(inMemoryAnswersRepositories.items[0]).toMatchObject({
-      content: 'Conteudo teste',
+    expect(inMemoryAnswersRepository.items[0]).toMatchObject({
+      content: 'Conteúdo teste',
     })
+
     expect(
-      inMemoryAnswersRepositories.items[0].attachments.currentItems,
+      inMemoryAnswersRepository.items[0].attachments.currentItems,
     ).toHaveLength(2)
-    expect(
-      inMemoryAnswersRepositories.items[0].attachments.currentItems,
-    ).toEqual([
-      expect.objectContaining({ attachmentId: new UniqueEntityId('1') }),
-      expect.objectContaining({ attachmentId: new UniqueEntityId('3') }),
-    ])
+    expect(inMemoryAnswersRepository.items[0].attachments.currentItems).toEqual(
+      [
+        expect.objectContaining({ attachmentId: new UniqueEntityID('1') }),
+        expect.objectContaining({ attachmentId: new UniqueEntityID('3') }),
+      ],
+    )
   })
 
   it('should not be able to edit a answer from another user', async () => {
     const newAnswer = makeAnswer(
       {
-        authorId: new UniqueEntityId('author-1'),
+        authorId: new UniqueEntityID('author-1'),
       },
-      new UniqueEntityId('answer1'),
+      new UniqueEntityID('answer-1'),
     )
 
-    console.log(newAnswer)
+    await inMemoryAnswersRepository.create(newAnswer)
 
-    await inMemoryAnswersRepositories.create(newAnswer)
     const result = await sut.execute({
-      authorId: 'author-2',
-      content: 'Conteudo teste',
       answerId: newAnswer.id.toValue(),
+      authorId: 'author-2',
+      content: 'Conteúdo teste',
       attachmentsIds: [],
     })
 

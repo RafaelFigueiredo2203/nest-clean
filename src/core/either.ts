@@ -1,4 +1,4 @@
-// ERROR
+// Error
 export class Left<L, R> {
   readonly value: L
 

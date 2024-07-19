@@ -1,36 +1,37 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { InMemoryAnswersRepository } from 'test/repositories/in-memory-answers-repository'
+import { FetchQuestionAnswersUseCase } from '@/domain/forum/application/use-cases/fetch-question-answers'
 import { makeAnswer } from 'test/factories/make-answer'
-import { InMemoryAnswerAttachmentsRepositories } from 'test/repositories/in-memory-answer-attachments-repository'
-import { InMemoryAnswersRepositories } from 'test/repositories/in-memory-answers-repository'
-import { FetchQuestionAnswersUseCase } from './fetch-question-answers'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id'
+import { InMemoryAnswerAttachmentsRepository } from 'test/repositories/in-memory-answer-attachments-repository'
 
-let inMemoryAnswerAttachmentsRepositories: InMemoryAnswerAttachmentsRepositories
-let inMemoryAnswersRepositories: InMemoryAnswersRepositories
+let inMemoryAnswerAttachmentsRepository: InMemoryAnswerAttachmentsRepository
+let inMemoryAnswersRepository: InMemoryAnswersRepository
 let sut: FetchQuestionAnswersUseCase
+
 describe('Fetch Question Answers', () => {
   beforeEach(() => {
-    inMemoryAnswerAttachmentsRepositories =
-      new InMemoryAnswerAttachmentsRepositories()
-    inMemoryAnswersRepositories = new InMemoryAnswersRepositories(
-      inMemoryAnswerAttachmentsRepositories,
+    inMemoryAnswerAttachmentsRepository =
+      new InMemoryAnswerAttachmentsRepository()
+    inMemoryAnswersRepository = new InMemoryAnswersRepository(
+      inMemoryAnswerAttachmentsRepository,
     )
-    sut = new FetchQuestionAnswersUseCase(inMemoryAnswersRepositories)
+    sut = new FetchQuestionAnswersUseCase(inMemoryAnswersRepository)
   })
 
-  it('should be able to fetch questions answers', async () => {
-    await inMemoryAnswersRepositories.create(
+  it('should be able to fetch question answers', async () => {
+    await inMemoryAnswersRepository.create(
       makeAnswer({
-        questionId: new UniqueEntityId('question-1'),
+        questionId: new UniqueEntityID('question-1'),
       }),
     )
-    await inMemoryAnswersRepositories.create(
+    await inMemoryAnswersRepository.create(
       makeAnswer({
-        questionId: new UniqueEntityId('question-1'),
+        questionId: new UniqueEntityID('question-1'),
       }),
     )
-    await inMemoryAnswersRepositories.create(
+    await inMemoryAnswersRepository.create(
       makeAnswer({
-        questionId: new UniqueEntityId('question-1'),
+        questionId: new UniqueEntityID('question-1'),
       }),
     )
 
@@ -42,11 +43,11 @@ describe('Fetch Question Answers', () => {
     expect(result.value?.answers).toHaveLength(3)
   })
 
-  it('should be able to fetch pagination questions answers', async () => {
+  it('should be able to fetch paginated question answers', async () => {
     for (let i = 1; i <= 22; i++) {
-      await inMemoryAnswersRepositories.create(
+      await inMemoryAnswersRepository.create(
         makeAnswer({
-          questionId: new UniqueEntityId('question-1'),
+          questionId: new UniqueEntityID('question-1'),
         }),
       )
     }
