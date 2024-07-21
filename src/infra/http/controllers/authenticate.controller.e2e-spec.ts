@@ -1,6 +1,5 @@
 import { AppModule } from '@/infra/app.module'
 import { DatabaseModule } from '@/infra/database/database.module'
-import { PrismaService } from '@/infra/database/prisma/prisma.service'
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { hash } from 'bcryptjs'
@@ -9,7 +8,7 @@ import { StudentFactory } from 'test/factories/make-student'
 
 describe('Authenticate (E2E)', () => {
   let app: INestApplication
-  let prisma: PrismaService
+
   let studentFactory: StudentFactory
 
   beforeAll(async () => {
@@ -20,10 +19,7 @@ describe('Authenticate (E2E)', () => {
 
     app = moduleRef.createNestApplication()
 
-    let studentFactory: StudentFactory
-
-    prisma = moduleRef.get(PrismaService)
-
+    studentFactory = moduleRef.get(StudentFactory)
     await app.init()
   })
 
