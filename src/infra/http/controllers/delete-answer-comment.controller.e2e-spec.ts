@@ -13,12 +13,11 @@ import { StudentFactory } from 'test/factories/make-student'
 describe('Delete answer comment (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
-  let jwt: JwtService
+  let studentFactory: StudentFactory
+  let questionFactory: QuestionFactory
   let answerFactory: AnswerFactory
   let answerCommentFactory: AnswerCommentFactory
-  let questionFactory: QuestionFactory
-  let studentFactory: StudentFactory
-  let answerCommentFactory: AnswerCommentFactory
+  let jwt: JwtService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -26,7 +25,6 @@ describe('Delete answer comment (E2E)', () => {
       providers: [
         StudentFactory,
         QuestionFactory,
-        AnswerCommentFactory,
         AnswerFactory,
         AnswerCommentFactory,
       ],
@@ -34,12 +32,11 @@ describe('Delete answer comment (E2E)', () => {
 
     app = moduleRef.createNestApplication()
 
+    prisma = moduleRef.get(PrismaService)
     studentFactory = moduleRef.get(StudentFactory)
+    questionFactory = moduleRef.get(QuestionFactory)
     answerFactory = moduleRef.get(AnswerFactory)
     answerCommentFactory = moduleRef.get(AnswerCommentFactory)
-    prisma = moduleRef.get(PrismaService)
-    answerCommentFactory = moduleRef.get(AnswerCommentFactory)
-    questionFactory = moduleRef.get(QuestionFactory)
     jwt = moduleRef.get(JwtService)
 
     await app.init()
@@ -47,6 +44,7 @@ describe('Delete answer comment (E2E)', () => {
 
   test('[DELETE] /answers/comments/:id', async () => {
     const user = await studentFactory.makePrismaStudent()
+
     const accessToken = jwt.sign({ sub: user.id.toString() })
 
     const question = await questionFactory.makePrismaQuestion({
@@ -54,8 +52,8 @@ describe('Delete answer comment (E2E)', () => {
     })
 
     const answer = await answerFactory.makePrismaAnswer({
-      authorId: user.id,
       questionId: question.id,
+      authorId: user.id,
     })
 
     const answerComment = await answerCommentFactory.makePrismaAnswerComment({
@@ -71,7 +69,7 @@ describe('Delete answer comment (E2E)', () => {
 
     expect(response.statusCode).toBe(204)
 
-    const commentOnDatabase = await prisma.answer.findUnique({
+    const commentOnDatabase = await prisma.comment.findUnique({
       where: {
         id: answerCommentId,
       },

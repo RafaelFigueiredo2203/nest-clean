@@ -10,7 +10,7 @@ import { QuestionFactory } from 'test/factories/make-question'
 
 import { StudentFactory } from 'test/factories/make-student'
 
-describe('Comment on question (E2E)', () => {
+describe('Comment on answer (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
   let jwt: JwtService
@@ -38,6 +38,7 @@ describe('Comment on question (E2E)', () => {
 
   test('[POST] /answers/:answerId/comments', async () => {
     const user = await studentFactory.makePrismaStudent()
+
     const accessToken = jwt.sign({ sub: user.id.toString() })
 
     const question = await questionFactory.makePrismaQuestion({
@@ -52,7 +53,7 @@ describe('Comment on question (E2E)', () => {
     const answerId = answer.id.toString()
 
     const response = await request(app.getHttpServer())
-      .post(`/questions/${answerId}/comments`)
+      .post(`/answers/${answerId}/comments`)
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
         content: 'New comment',

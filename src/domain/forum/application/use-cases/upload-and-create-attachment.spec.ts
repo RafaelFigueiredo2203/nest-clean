@@ -31,7 +31,7 @@ describe('Upload and create attachment', () => {
     expect(fakeUploader.uploads).toHaveLength(1)
     expect(fakeUploader.uploads[0]).toEqual(
       expect.objectContaining({
-        filName: 'profile.png',
+        fileName: 'profile.png',
       }),
     )
   })
