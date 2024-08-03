@@ -38,9 +38,11 @@ import { EditQuestionController } from './controllers/edit-question.controller'
 import { FetchQuestionsAnswersController } from './controllers/fetch-question-answers.controller'
 import { FetchQuestionsCommentsController } from './controllers/fetch-question-comment.controller'
 
+import { ReadNotificationUseCase } from '@/domain/notification/application/use-cases/read-notification'
 import { FetchAnswerCommentsController } from './controllers/fetch-answer-comments.controller'
 import { FetchRecentQuestionsController } from './controllers/fetch-recent-questions.controller'
 import { GetQuestionBySlugController } from './controllers/get-question-by-slug.controller'
+import { ReadNotificationController } from './controllers/read-notification.controller'
 import { UploadAttachmentController } from './controllers/upload-attachment.controller'
 
 @Module({
@@ -65,6 +67,7 @@ import { UploadAttachmentController } from './controllers/upload-attachment.cont
     FetchQuestionsCommentsController,
     FetchAnswerCommentsController,
     UploadAttachmentController,
+    ReadNotificationController,
   ],
   providers: [
     CreateQuestionUseCase,
@@ -86,6 +89,7 @@ import { UploadAttachmentController } from './controllers/upload-attachment.cont
     FetchQuestionCommentsUseCase,
     FetchAnswerCommentsUseCase,
     UploadAndCreateAttachmentUseCase,
+    ReadNotificationUseCase,
   ],
 })
 export class HttpModule {}
